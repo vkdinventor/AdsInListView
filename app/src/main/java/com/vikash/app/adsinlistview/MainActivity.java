@@ -9,6 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.clockbyte.admobadapter.AdmobAdapterWrapper;
+import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
+import com.google.android.gms.ads.AdRequest;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +55,31 @@ public class MainActivity extends AppCompatActivity {
 
 
         ListAdapter adapter = new ListAdapter(list, this);
-        recycler_view.setAdapter(adapter);
+
+        String[] testDevicesIds = new String[]{getString(R.string.testDeviceID), AdRequest.DEVICE_ID_EMULATOR};
+
+        AdmobRecyclerAdapterWrapper adapterWrapper = new AdmobRecyclerAdapterWrapper(this,testDevicesIds);
+        adapterWrapper.setAdapter(adapter); //wrapping your adapter with a AdmobAdapterWrapper.
+        //here you can use the following string to set your custom layouts for a different types of native ads
+        //adapterWrapper.setInstallAdsLayoutId(R.layout.your_installad_layout);
+        //adapterWrapper.setcontentAdsLayoutId(R.layout.your_installad_layout);
+
+        //Sets the max count of ad blocks per dataset, by default it equals to 3 (according to the Admob's policies and rules)
+        adapterWrapper.setLimitOfAds(3);
+
+        //Sets the number of your data items between ad blocks, by default it equals to 10.
+        //You should set it according to the Admob's policies and rules which says not to
+        //display more than one ad block at the visible part of the screen,
+        // so you should choose this parameter carefully and according to your item's height and screen resolution of a target devices
+        adapterWrapper.setNoOfDataBetweenAds(10);
+
+        //It's a test admob ID. Please replace it with a real one only when you will be ready to deploy your product to the Release!
+        //Otherwise your Admob account could be banned
+        //String admobUnitId = getResources().getString(R.string.banner_admob_unit_id);
+        //adapterWrapper.setAdmobReleaseUnitId(admobUnitId);
+
+        recycler_view.setAdapter(adapterWrapper); // setting an AdmobAdapterWrapper to a ListView
+        adapter.notifyDataSetChanged();
     }
 
 
